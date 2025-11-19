@@ -7,11 +7,8 @@ const config = {
         ? 'http://localhost:8000'
         : 'https://vicky-ai-backend.onrender.com', // Update this with your Render backend URL
     
-    // Discord webhook - IMPORTANT: Move this to backend in production!
-    discordWebhook: 'https://discord.com/api/webhooks/1440670389780086947/lhjHNqWENfepDhsQu1L07hYp497zCxkowZm3FsRJjp9XWX-EDZ_39u1Cr4574bNy3kFZ',
-    
-    // Gemini API for AI Chatbot
-    geminiApiKey: 'AIzaSyA6FDeM3RnOu-NNSDfS8AnfolYWtNbDvhQ',
+    // NOTE: API keys and webhooks are ONLY stored in backend/.env
+    // Frontend NEVER accesses them directly - all requests go through backend
     
     // Contact information
     email: 'npdimagine@gmail.com',

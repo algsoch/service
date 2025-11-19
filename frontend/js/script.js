@@ -898,8 +898,9 @@ contactForm.addEventListener('submit', async (e) => {
     submitButton.disabled = true;
     
     try {
-        // Discord webhook URL - loaded from config.js for security
-        const discordWebhookUrl = config.discordWebhook;
+        // Send to backend Discord endpoint (keeps webhook secret!)
+        const backendUrl = config.backendUrl || 'http://localhost:8000';
+        const discordBackendUrl = `${backendUrl}/api/send-to-discord`;
         
         // Create Discord embed
         const discordPayload = {
@@ -950,8 +951,8 @@ contactForm.addEventListener('submit', async (e) => {
             }]
         };
         
-        // Send to Discord
-        const response = await fetch(discordWebhookUrl, {
+        // Send to Discord via backend
+        const response = await fetch(discordBackendUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

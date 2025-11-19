@@ -122,7 +122,9 @@ async function sendConversationToDiscord(userInfo) {
     };
 
     try {
-        await fetch(config.discordWebhook, {
+        // Send to backend Discord endpoint (keeps webhook secret!)
+        const discordBackendUrl = BACKEND_API_URL.replace('/api/chat-gemini', '/api/send-to-discord');
+        await fetch(discordBackendUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(discordPayload)
