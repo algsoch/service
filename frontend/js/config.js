@@ -5,7 +5,7 @@ const config = {
     // Backend API URL - automatically detects environment
     backendUrl: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
         ? 'http://localhost:8000'
-        : 'https://vicky-ai-backend.onrender.com', // Update this with your Render backend URL
+        : 'https://service-y5ld.onrender.com', // Your Render backend URL
     
     // NOTE: API keys and webhooks are ONLY stored in backend/.env
     // Frontend NEVER accesses them directly - all requests go through backend
