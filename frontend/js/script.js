@@ -902,53 +902,18 @@ contactForm.addEventListener('submit', async (e) => {
         const backendUrl = config.backendUrl || 'http://localhost:8000';
         const discordBackendUrl = `${backendUrl}/api/send-to-discord`;
         
-        // Create Discord embed
+        // Format data for backend API
         const discordPayload = {
-            embeds: [{
-                title: "🚀 New Contact Form Submission",
-                color: 5814783, // Blue color
-                fields: [
-                    {
-                        name: "👤 Name",
-                        value: data.name,
-                        inline: true
-                    },
-                    {
-                        name: "📧 Email",
-                        value: data.email,
-                        inline: true
-                    },
-                    {
-                        name: "🏢 Company",
-                        value: data.company,
-                        inline: true
-                    },
-                    {
-                        name: "🎯 Service",
-                        value: data.service,
-                        inline: true
-                    },
-                    {
-                        name: "💰 Budget",
-                        value: data.budget,
-                        inline: true
-                    },
-                    {
-                        name: "⏰ Timeline",
-                        value: data.timeline,
-                        inline: true
-                    },
-                    {
-                        name: "📝 Message",
-                        value: data.message || "No message provided",
-                        inline: false
-                    }
-                ],
-                timestamp: new Date().toISOString(),
-                footer: {
-                    text: "Vicky AI Systems | Contact Form"
+            conversation_history: [
+                {
+                    role: "contact_form",
+                    content: `New Contact Form Submission:\n👤 Name: ${data.name}\n📧 Email: ${data.email}\n🏢 Company: ${data.company || 'N/A'}\n🎯 Service: ${data.service}\n💰 Budget: ${data.budget}\n⏰ Timeline: ${data.timeline}\n📝 Message: ${data.message || 'No message provided'}`
                 }
-            }]
+            ],
+            user_email: data.email,
+            user_phone: data.phone || null,
+            user_industry: data.service || null,
+            deal_status: "contact_requested"
         };
         
         // Send to Discord via backend
@@ -964,6 +929,8 @@ contactForm.addEventListener('submit', async (e) => {
             showToast('Message sent successfully! 🎉 Vicky will respond within 24-48 hours.');
             contactForm.reset();
         } else {
+            const errorData = await response.json().catch(() => ({}));
+            console.error('Discord API Error:', errorData);
             throw new Error('Discord webhook failed');
         }
         
