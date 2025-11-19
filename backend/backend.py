@@ -11,7 +11,7 @@ from typing import Optional, List, Dict
 import uvicorn
 from datetime import datetime
 import os
-from openai import OpenAI
+# Removed: from openai import OpenAI  - Not using OpenAI, using Gemini instead
 from discord_webhook import DiscordWebhook, DiscordEmbed
 import json
 from dotenv import load_dotenv
@@ -20,8 +20,8 @@ import requests
 # Load environment variables
 load_dotenv()
 
-# Initialize OpenAI client (optional - for paid GPT)
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", "your-openai-api-key-here"))
+# Remove OpenAI client - we're using Gemini (FREE!) instead
+# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", "your-openai-api-key-here"))
 DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK", "https://discord.com/api/webhooks/1440670389780086947/lhjHNqWENfepDhsQu1L07hYp497zCxkowZm3FsRJjp9XWX-EDZ_39u1Cr4574bNy3kFZ")
 
 # Gemini API (FREE!) - Keep secret in backend
@@ -365,97 +365,11 @@ REMEMBER: You're not just a chatbot - you're Vicky's trusted sales partner. Ever
             timestamp=datetime.now().isoformat()
         )
 
-@app.post("/api/chat", response_model=ChatResponse)
-async def chat_endpoint(chat_message: ChatMessage):
-    """
-    Real AI chatbot using OpenAI GPT-4
-    Acts as Vicky's professional sales agent
-    """
-    
-    user_message = chat_message.message
-    conversation_id = chat_message.conversation_id or f"conv_{datetime.now().timestamp()}"
-    
-    # Build conversation history for OpenAI
-    messages = [
-        {
-            "role": "system",
-            "content": """You are Vicky Kumar's professional AI sales assistant. Vicky is an expert full-stack developer and AI specialist from New Delhi, India.
-
-YOUR ROLE:
-- Have natural, intelligent conversations with potential clients
-- Understand their business problems and suggest AI solutions
-- Provide accurate pricing and technical details
-- Build rapport and qualify leads professionally
-- Suggest booking a call when appropriate
-
-VICKY'S SERVICES & PRICING:
-🤖 AI Chatbot/Agent: ₹15,000 - ₹25,000
-🧠 Machine Learning Model: ₹25,000 - ₹50,000  
-⚡ Full AI Agent System: ₹50,000 - ₹1,00,000
-🚀 Full-Stack AI Application: ₹75,000 - ₹2,00,000
-📊 Data Engineering: ₹20,000 - ₹60,000
-👁️ Computer Vision: ₹30,000 - ₹80,000
-
-KEY ACHIEVEMENTS:
-- 97.94% accuracy Brain Tumor Classification (Medical AI)
-- Real-time polling systems with WebSockets
-- Production deployment expertise (Docker, CI/CD)
-- Speech recognition & NLP systems
-
-CONTACT:
-📧 npdimagine@gmail.com
-📱 +91 83838 48219
-
-CONVERSATION STYLE:
-- Be conversational, not robotic
-- Ask relevant follow-up questions
-- Show genuine interest in their problem
-- Don't just list services - have a real dialogue
-- When they're ready, offer to send details to Vicky via the chatbot
-- If they confirm a deal or want to move forward, acknowledge and say you'll notify Vicky immediately
-
-IMPORTANT:
-- Never say "I can't contact Vicky" - you CAN send messages through the chatbot
-- When user wants to connect, say "I can send your details and conversation to Vicky right now via this chatbot. He'll reach out within 24 hours. Should I do that?"
-- Be helpful, professional, and human-like in responses"""
-        }
-    ]
-    
-    # Add conversation history
-    for msg in chat_message.conversation_history:
-        messages.append({
-            "role": msg.get("role", "user"),
-            "content": msg.get("content", "")
-        })
-    
-    # Add current message
-    messages.append({"role": "user", "content": user_message})
-    
-    try:
-        # Call OpenAI API
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",  # Fast and cost-effective
-            messages=messages,
-            temperature=0.8,  # Natural conversation
-            max_tokens=500
-        )
-        
-        response_text = response.choices[0].message.content
-        
-        return ChatResponse(
-            response=response_text,
-            conversation_id=conversation_id,
-            timestamp=datetime.now().isoformat()
-        )
-        
-    except Exception as e:
-        print(f"OpenAI API Error: {str(e)}")
-        # Fallback response
-        return ChatResponse(
-            response=f"Hey! I'm having a brief technical issue. But I can still help! Tell me about your project and I'll make sure Vicky gets your message. What are you looking to build?",
-            conversation_id=conversation_id,
-            timestamp=datetime.now().isoformat()
-        )
+# REMOVED: Old OpenAI endpoint - we're using Gemini (FREE!) instead
+# @app.post("/api/chat", response_model=ChatResponse)
+# async def chat_endpoint(chat_message: ChatMessage):
+#     """OLD endpoint using paid OpenAI - replaced by /api/chat-gemini"""
+#     pass
 
 @app.post("/api/send-to-discord")
 async def send_to_discord(request: SendToDiscordRequest):
