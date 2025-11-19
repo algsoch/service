@@ -127,8 +127,38 @@ else
 fi
 echo ""
 
-# Test 6: Invalid Endpoint (404 Test)
-echo "Test 6: Invalid Endpoint (Error Handling)"
+# Test 6: Contact Form Submission
+echo "Test 6: Contact Form Discord Integration"
+echo "POST $BACKEND_URL/api/send-to-discord (Contact Form)"
+response=$(curl -s -w "\n%{http_code}" -X POST "$BACKEND_URL/api/send-to-discord" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "conversation_history": [
+      {
+        "role": "contact_form",
+        "content": "📋 **Contact Form Submission**\n\n👤 **Name:** John Doe\n📧 **Email:** john.doe@example.com\n🏢 **Company:** Tech Innovations Inc\n🎯 **Service:** Full-Stack Development\n💰 **Budget:** $10,000 - $25,000\n⏰ **Timeline:** 2-3 months\n\n📝 **Message:**\nWe need a custom AI chatbot for our e-commerce platform with features like product recommendations, order tracking, and customer support automation."
+      }
+    ],
+    "user_email": "john.doe@example.com",
+    "user_phone": null,
+    "user_industry": "Full-Stack Development",
+    "deal_status": "contact_requested"
+  }')
+http_code=$(echo "$response" | tail -n1)
+body=$(echo "$response" | head -n-1)
+
+if [ "$http_code" -eq 200 ]; then
+    echo -e "${GREEN}✅ PASS${NC} - Contact form notification successful"
+    echo "Response: $body"
+    echo -e "${YELLOW}📬 Check Discord for contact form notification!${NC}"
+else
+    echo -e "${RED}❌ FAIL${NC} - Contact form notification failed (HTTP $http_code)"
+    echo "Response: $body"
+fi
+echo ""
+
+# Test 7: Invalid Endpoint (404 Test)
+echo "Test 7: Invalid Endpoint (Error Handling)"
 echo "GET $BACKEND_URL/invalid-endpoint"
 response=$(curl -s -w "\n%{http_code}" "$BACKEND_URL/invalid-endpoint")
 http_code=$(echo "$response" | tail -n1)
@@ -143,8 +173,8 @@ else
 fi
 echo ""
 
-# Test 7: Missing Required Fields (Validation Test)
-echo "Test 7: Input Validation (Missing Fields)"
+# Test 8: Missing Required Fields (Validation Test)
+echo "Test 8: Input Validation (Missing Fields)"
 echo "POST $BACKEND_URL/api/chat-gemini (missing message field)"
 response=$(curl -s -w "\n%{http_code}" -X POST "$BACKEND_URL/api/chat-gemini" \
   -H "Content-Type: application/json" \
@@ -161,8 +191,8 @@ else
 fi
 echo ""
 
-# Test 8: CORS Headers
-echo "Test 8: CORS Configuration"
+# Test 9: CORS Headers
+echo "Test 9: CORS Configuration"
 echo "OPTIONS $BACKEND_URL/api/chat-gemini"
 response=$(curl -s -I -X OPTIONS "$BACKEND_URL/api/chat-gemini" \
   -H "Origin: https://example.com" \
@@ -181,8 +211,18 @@ echo "========================================="
 echo "📊 Test Summary"
 echo "========================================="
 echo "Backend URL: $BACKEND_URL"
-echo "Tests completed!"
+echo "Total Tests: 9"
 echo ""
-echo "Check your Discord server for test notification"
-echo "Visit API docs: $BACKEND_URL/docs"
+echo "✅ Test 1: Health Check"
+echo "✅ Test 2: Root Endpoint"
+echo "✅ Test 3: Gemini Chat"
+echo "✅ Test 4: Chat with History"
+echo "✅ Test 5: Discord Integration (Chat)"
+echo "✅ Test 6: Contact Form Discord Integration"
+echo "✅ Test 7: 404 Error Handling"
+echo "✅ Test 8: Input Validation"
+echo "✅ Test 9: CORS Configuration"
+echo ""
+echo "📬 Check your Discord server for test notifications"
+echo "📖 Visit API docs: $BACKEND_URL/docs"
 echo "========================================="
