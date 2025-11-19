@@ -907,14 +907,16 @@ contactForm.addEventListener('submit', async (e) => {
             conversation_history: [
                 {
                     role: "contact_form",
-                    content: `New Contact Form Submission:\n👤 Name: ${data.name}\n📧 Email: ${data.email}\n🏢 Company: ${data.company || 'N/A'}\n🎯 Service: ${data.service}\n💰 Budget: ${data.budget}\n⏰ Timeline: ${data.timeline}\n📝 Message: ${data.message || 'No message provided'}`
+                    content: `📋 **Contact Form Submission**\n\n👤 **Name:** ${data.name}\n📧 **Email:** ${data.email}\n🏢 **Company:** ${data.company}\n🎯 **Service:** ${data.service}\n💰 **Budget:** ${data.budget}\n⏰ **Timeline:** ${data.timeline}\n\n📝 **Message:**\n${data.message}`
                 }
             ],
             user_email: data.email,
-            user_phone: data.phone || null,
+            user_phone: null,  // No phone field in contact form
             user_industry: data.service || null,
             deal_status: "contact_requested"
         };
+        
+        console.log('Sending to Discord:', discordPayload);
         
         // Send to Discord via backend
         const response = await fetch(discordBackendUrl, {
@@ -925,13 +927,15 @@ contactForm.addEventListener('submit', async (e) => {
             body: JSON.stringify(discordPayload)
         });
         
-        if (response.ok || response.status === 204) {
-            showToast('Message sent successfully! 🎉 Vicky will respond within 24-48 hours.');
+        if (response.ok) {
+            const result = await response.json();
+            console.log('Discord response:', result);
+            showToast('✅ Message sent successfully! Vicky will respond within 24-48 hours.');
             contactForm.reset();
         } else {
-            const errorData = await response.json().catch(() => ({}));
+            const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
             console.error('Discord API Error:', errorData);
-            throw new Error('Discord webhook failed');
+            throw new Error(`Server error: ${errorData.detail || response.statusText}`);
         }
         
     } catch (error) {
